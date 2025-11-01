@@ -1,373 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Calculator</title>
-    <style>
-        /* ===== Global Styles ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="styles.css">
+<title>Modern Calculator</title>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* ===== Animated Background ===== */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 121, 218, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(99, 179, 237, 0.3) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            33% {
-                transform: translate(30px, -50px) rotate(120deg);
-            }
-            66% {
-                transform: translate(-20px, 20px) rotate(240deg);
-            }
-        }
-
-        /* ===== Floating Shapes ===== */
-        .shape {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(40px);
-            opacity: 0.5;
-            animation: floatShape 15s ease-in-out infinite;
-        }
-
-        .shape1 {
-            width: 300px;
-            height: 300px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            top: 10%;
-            left: 10%;
-            animation-delay: 0s;
-        }
-
-        .shape2 {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            bottom: 20%;
-            right: 15%;
-            animation-delay: 5s;
-        }
-
-        .shape3 {
-            width: 250px;
-            height: 250px;
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            top: 60%;
-            left: 20%;
-            animation-delay: 10s;
-        }
-
-        @keyframes floatShape {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            50% {
-                transform: translate(50px, -50px) scale(1.1);
-            }
-        }
-
-        /* ===== Calculator Container ===== */
-        #calculator {
-            background: rgba(30, 30, 30, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 30px;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-            max-width: 450px;
-            position: relative;
-            z-index: 10;
-            animation: slideIn 0.6s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        /* ===== Display Screen ===== */
-        #display {
-            width: 100%;
-            padding: 30px 25px;
-            font-size: 3.5rem;
-            font-weight: 300;
-            text-align: right;
-            border: none;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
-            color: #ffffff;
-            margin-bottom: 25px;
-            box-shadow: 
-                0 10px 30px rgba(0, 0, 0, 0.3) inset,
-                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-            letter-spacing: 2px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        #display:focus {
-            outline: none;
-        }
-
-        /* ===== Keypad Layout ===== */
-        #keys {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
-
-        /* ===== Button Styles ===== */
-        button {
-            width: 100%;
-            aspect-ratio: 1;
-            min-height: 80px;
-            border-radius: 20px;
-            border: none;
-            background: linear-gradient(135deg, #3a3a3a 0%, #2d2d2d 100%);
-            color: #ffffff;
-            font-size: 2rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 
-                0 4px 15px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-            position: relative;
-            overflow: hidden;
-        }
-
-        button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        button:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 8px 25px rgba(0, 0, 0, 0.4),
-                0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-        }
-
-        button:active {
-            transform: translateY(0);
-            box-shadow: 
-                0 2px 10px rgba(0, 0, 0, 0.4) inset,
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        }
-
-        /* ===== Operator Buttons ===== */
-        .operator-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            font-weight: 600;
-        }
-
-        .operator-btn:hover {
-            background: linear-gradient(135deg, #f5a3ff 0%, #ff6b80 100%);
-        }
-
-        /* ===== Equals Button ===== */
-        button:nth-last-child(2) {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            font-size: 2.5rem;
-        }
-
-        button:nth-last-child(2):hover {
-            background: linear-gradient(135deg, #6fbdff 0%, #20f5ff 100%);
-        }
-
-        /* ===== Clear Button ===== */
-        button:last-child {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-
-        button:last-child:hover {
-            background: linear-gradient(135deg, #ff85b0 0%, #fef160 100%);
-        }
-
-        /* ===== Responsive Design ===== */
-        @media (max-width: 600px) {
-            #calculator {
-                max-width: 350px;
-                padding: 20px;
-            }
-
-            #display {
-                font-size: 2.5rem;
-                padding: 20px 15px;
-            }
-
-            button {
-                min-height: 65px;
-                font-size: 1.6rem;
-            }
-
-            button:nth-last-child(2) {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 400px) {
-            #calculator {
-                max-width: 300px;
-                padding: 15px;
-            }
-
-            #display {
-                font-size: 2rem;
-                padding: 15px 10px;
-            }
-
-            button {
-                min-height: 55px;
-                font-size: 1.4rem;
-            }
-
-            #keys {
-                gap: 10px;
-            }
-        }
-    </style>
 </head>
 <body>
-    <!-- Animated Background Shapes -->
-    <div class="shape shape1"></div>
-    <div class="shape shape2"></div>
-    <div class="shape shape3"></div>
+  <!-- Floating Shapes -->
+  <div class="shape shape1"></div>
+  <div class="shape shape2"></div>
+  <div class="shape shape3"></div>
 
-    <!-- Calculator -->
-    <div id="calculator">
-        <input id="display" readonly value="0">
-        <div id="keys">
-            <button onclick="clearDisplay()" class="operator-btn">C</button>
-            <button onclick="deleteLast()">⌫</button>
-            <button onclick="appendToDisplay('%')" class="operator-btn">%</button>
-            <button onclick="appendToDisplay('/')" class="operator-btn">÷</button>
-            
-            <button onclick="appendToDisplay('7')">7</button>
-            <button onclick="appendToDisplay('8')">8</button>
-            <button onclick="appendToDisplay('9')">9</button>
-            <button onclick="appendToDisplay('*')" class="operator-btn">×</button>
-            
-            <button onclick="appendToDisplay('4')">4</button>
-            <button onclick="appendToDisplay('5')">5</button>
-            <button onclick="appendToDisplay('6')">6</button>
-            <button onclick="appendToDisplay('-')" class="operator-btn">−</button>
-            
-            <button onclick="appendToDisplay('1')">1</button>
-            <button onclick="appendToDisplay('2')">2</button>
-            <button onclick="appendToDisplay('3')">3</button>
-            <button onclick="appendToDisplay('+')" class="operator-btn">+</button>
-            
-            <button onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
-            <button onclick="appendToDisplay('.')">.</button>
-            <button onclick="calculate()">=</button>
-        </div>
+  <!-- Calculator -->
+  <div id="calculator">
+    <input id="display" readonly value="0">
+    <div id="keys">
+      <button onclick="clearDisplay()" class="clear-btn">C</button>
+      <button onclick="deleteLast()">⌫</button>
+      <button onclick="appendToDisplay('%')" class="operator-btn">%</button>
+      <button onclick="appendToDisplay('/')" class="operator-btn">÷</button>
+
+      <button onclick="appendToDisplay('7')">7</button>
+      <button onclick="appendToDisplay('8')">8</button>
+      <button onclick="appendToDisplay('9')">9</button>
+      <button onclick="appendToDisplay('*')" class="operator-btn">×</button>
+
+      <button onclick="appendToDisplay('4')">4</button>
+      <button onclick="appendToDisplay('5')">5</button>
+      <button onclick="appendToDisplay('6')">6</button>
+      <button onclick="appendToDisplay('-')" class="operator-btn">−</button>
+
+      <button onclick="appendToDisplay('1')">1</button>
+      <button onclick="appendToDisplay('2')">2</button>
+      <button onclick="appendToDisplay('3')">3</button>
+      <button onclick="appendToDisplay('+')" class="operator-btn">+</button>
+
+      <button onclick="appendToDisplay('0')" class="zero-btn">0</button>
+      <button onclick="appendToDisplay('.')">.</button>
+      <button onclick="calculate()" class="equals-btn">=</button>
     </div>
-
-    <script>
-        const display = document.getElementById("display");
-
-        function appendToDisplay(input) {
-            if (display.value === "0" || display.value === "Error") {
-                display.value = input;
-            } else {
-                display.value += input;
-            }
-        }
-
-        function clearDisplay() {
-            display.value = "0";
-        }
-
-        function deleteLast() {
-            if (display.value.length > 1) {
-                display.value = display.value.slice(0, -1);
-            } else {
-                display.value = "0";
-            }
-        }
-
-        function calculate() {
-            try {
-                // Replace display symbols with actual operators
-                let expression = display.value
-                    .replace(/×/g, '*')
-                    .replace(/÷/g, '/')
-                    .replace(/−/g, '-');
-                
-                display.value = eval(expression);
-            } catch (error) {
-                display.value = "Error";
-            }
-        }
-
-        // Keyboard support
-        document.addEventListener('keydown', function(event) {
-            const key = event.key;
-            
-            if (key >= '0' && key <= '9') {
-                appendToDisplay(key);
-            } else if (key === '.') {
-                appendToDisplay(key);
-            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
-                appendToDisplay(key);
-            } else if (key === 'Enter' || key === '=') {
-                event.preventDefault();
-                calculate();
-            } else if (key === 'Escape' || key === 'c' || key === 'C') {
-                clearDisplay();
-            } else if (key === 'Backspace') {
-                event.preventDefault();
-                deleteLast();
-            }
-        });
-    </script>
+  </div>
 </body>
 </html>
